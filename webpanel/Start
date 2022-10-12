@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if ! [ -e "node_modules" ]; then
+	git pull --ff-only
+	npm install
+
+	./node_modules/.bin/browserify Source/Server/Browser.js -o Source/Server/Page/scripts/browser.js
+fi
+
+LOG=Logs/Main.log
+
+if [ $EUID != 0 ]; then
+	exit
+fi
+
+$(which node || which nodejs) Source/Server/Server >$LOG

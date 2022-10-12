@@ -1,0 +1,53 @@
+#!/bin/bash
+
+RED="\e[31m"
+GREEN="\e[32m"
+EDC="\e[0m"
+
+if ! [ -e "build/" ]; then
+    ./update;
+    exit 1;
+fi
+
+if [ $EUID == 0 ]; then
+    echo -echo "${RED}This script must not be run as root"
+    exit
+fi
+
+# mount steamapps
+sudo mkdir -p /opt/steamapps
+mountpoint -q /opt/steamapps || sudo mount --bind ~/.steam/steam/steamapps/ /opt/steamapps
+
+# catch our ipc server
+pointserver=$( ps faux | grep '/opt/__cheat__/ipc/bin/server' | grep -vw grep | awk '{ print $2 }' );
+[ -z "$pointserver" ] && /opt/__cheat__/ipc/bin/server -s >/dev/null &
+[ -z "$pointserver" ] && echo $! >/tmp/ipc-server.pid
+
+# get our webpanel
+if [ -e "/tmp/webpanel.pid" ] && ps -p `cat "/tmp/webpanel.pid"` >/dev/null; then
+    echo Panel is already Running!
+else
+    pushd webpanel
+    sudo PATH="$PATH" STEAM_LD_PRELOAD="$(cd ../ && pwd)/proxy-server/disable-vac/bin64/libvpcfs.so.0:$(cd ../ && pwd)/proxy-server/disable-vac/bin32/libvpcfs.so.0" bash ./Start &
+    popd
+fi
+
+# get our server
+pushd proxy-server
+PATH="$PATH" pm2 -f start index.js
+popd
+
+if [ -x "$(command -v pulseaudio)" ]; then
+    echo "Setting up Pulseaudio socket"
+    echo -e "${RED}" # Errors
+    pulse=$(pgrep -u "$USER" pulseaudio);
+    ([ ! -z "$pulse" ]) && pulseaudio --start &>/dev/null &
+    pactl load-module module-native-protocol-unix auth-anonymous=1 socket=/tmp/pulse.sock > /tmp/pulsemodule.id
+else
+    echo -e "${GREEN}Pulseaudio socket already ready."
+fi
+
+sudo chmod 700 /opt/steamapps/common/Team\ Fortress\ 2/tf/glshaders.cfg
+echo -e "${GREEN}GlShaders updated."
+
+echo -e "Server is ready at \e[1;1m'localhost:8080'\e[0m"

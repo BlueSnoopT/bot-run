@@ -1,0 +1,55 @@
+<html>
+    <head>
+        <title>CHIPC control panel</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="browser.js"></script>
+    </head>
+    <body class="vgui-container vgui-font">
+        <h1>Cathook IPC Control Panel</h1>
+        <div id="container-login" class="vgui-outset">
+            If you don't see any data, please login using the password shown in console and refresh the page
+            <input id="api-password" type="text" placeholder="Password">
+            <input id="api-login-button" type="button" value="Login">
+        </div>
+        <br>
+        <div id="console-container">
+            <span><input type="text" id="console" placeholder="command for every client" size=64 class="vgui-border-inset"></span>
+            <input type="button" id="console-send" value="Submit" class="vgui-border-out">
+        </div>
+        <br>
+        <div id="status" class="nohighlight">
+            <span>Status: </span><span id="status-text">initializing</span>
+        </div>
+        <div>
+            <input type="button" id="bot-restartall" value="Restart all"> <input type="button" id="bot-terminateall" value="Terminate all"> <input type="button" id="bot-refresh" value="Refresh bot list"> <input id="bot-quota" value="3"> <input id="bot-quota-apply" type="button" value="Apply quota">
+        </div>
+        <br>
+        <div id="table-container">
+            <table id="clients" class="vgui-table vgui-inset">
+                <tr>
+                    <td scope="row">Actions</td>
+                    <td scope="row">Restarts</td>
+                    <td scope="row">Name</td>
+                    <td scope="row">State</td>
+                    <td scope="row">Profile</td>
+                    <td scope="row">Uptime</td>
+                    <td scope="row">Status</td>
+                    <td scope="row">Queue</td>
+                    <td scope="row">Total Score</td>
+                    <td scope="row">Current Score</td>
+                    <td scope="row">Connected</td>
+                    <td scope="row">Class</td>
+                    <td scope="row">Health</td>
+                    <td scope="row">Map</td>
+                    <td scope="row">Players</td>
+                    <td scope="row">Bot</td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <div class="nopad vmiddle">
+                <input type="checkbox" id="autorestart-bots">Auto-restart nonresponsive bots</input>
+            </div>
+        </div>
+    </body>
+</html>

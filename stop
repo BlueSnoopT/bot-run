@@ -1,0 +1,17 @@
+#!/bin/bash
+
+[ -f /tmp/ipc-server.pid ] && sudo kill $(cat /tmp/ipc-server.pid)
+[ -f /tmp/webpanel.pid ] && PID="$(cat /tmp/webpanel.pid)" && sudo kill -SIGINT "$PID" && tail --pid="$PID" -f /dev/null
+[ -f /tmp/nnullnexus-proxy.pid ] && sudo kill $(cat /tmp/proxy.pid)
+
+[ -f /tmp/webpanel.pid ] && sudo rm /tmp/webpanel.pid
+[ -f /tmp/proxy.pid ] && sudo rm /tmp/proxy.pid
+[ -f /tmp/ipc-server.pid ] && sudo rm /tmp/ipc-server.pid
+
+pointserver=$( ps faux | grep '/opt/__cheat__/ipc/bin/server' | grep -vw grep | awk '{ print $2 }' );
+[ ! -z "$pointserver" ] && sudo kill ${pointserver};
+pointserverconsole=$( ps faux | grep '/opt/__cheat__/ipc/bin/console' | grep -vw grep | awk '{ print $2 }' );
+[ ! -z "$pointserverconsole" ] && sudo kill ${pointserverconsole};
+
+cd webpanel
+./Stop

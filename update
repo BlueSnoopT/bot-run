@@ -1,0 +1,25 @@
+#!/bin/bash
+
+mkdir -p build
+pushd build
+
+cmake ../__cheat__
+
+numcpu=$(grep -c ^processor /proc/cpuinfo)
+make -j$numcpu
+
+if ! [ -e "Builder/libcathook.so" ]; then
+    echo "FATAL: Build failed"
+    exit
+fi
+
+popd
+
+if ! [ -e "proxy-server/node-modules" ]; then
+    cd proxy-server
+    npm i
+    cd ..
+fi
+
+sudo mkdir -p "/opt/__cheat__/bin/"
+sudo cp "build/Builder/libcathook.so" "/opt/__cheat__/bin/libcathook-textmode.so"

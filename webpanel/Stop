@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# main kill function
+# lets be honest. what else would you be using node for if you had this installed?
+sudo killall -9 node 
